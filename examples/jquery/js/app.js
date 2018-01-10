@@ -2,7 +2,7 @@
 
 Instead of a store function which varies based on argument lenght,
 separated it into a save and load function (line 40 - 45). 
-Changed the one instance of store() with one callback to load() (line 51).
+Changed the one instance of store() with one argument to load() (line 51).
 Removed the call to store() in render() and instead have a call to save() 
 immediately after every instance of call to render() (except
 in the Router section where it's not necessary). (lines 102, 129,
