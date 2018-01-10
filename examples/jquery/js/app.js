@@ -1,4 +1,13 @@
-/*global jQuery, Handlebars, Router */
+/*global jQuery, Handlebars, Router 
+
+Instead of a store function which varies based on argument lenght,
+separated it into a save and load function (line 40 - 45). 
+Changed the one instance of store() with one callback to load() (line 51).
+Removed the call to store() in render() and instead have a call to save() 
+immediately after every instance of call to render() (except
+in the Router section where it's not necessary). (lines 102, 129,
+160, 167, 199, 204 */
+
 jQuery(function ($) {
 	'use strict';
 
@@ -22,25 +31,24 @@ jQuery(function ($) {
 				}
 				uuid += (i === 12 ? 4 : (i === 16 ? (random & 3 | 8) : random)).toString(16);
 			}
-
 			return uuid;
-		},
+      		},
 		pluralize: function (count, word) {
 			return count === 1 ? word : word + 's';
 		},
-		store: function (namespace, data) {
-			if (arguments.length > 1) {
+
+		save: function (namespace, data) {
 				return localStorage.setItem(namespace, JSON.stringify(data));
-			} else {
+			}, 
+    		load: function (namespace) {
 				var store = localStorage.getItem(namespace);
 				return (store && JSON.parse(store)) || [];
 			}
-		}
 	};
 
 	var App = {
 		init: function () {
-			this.todos = util.store('todos-jquery');
+			this.todos = util.load('todos-jquery');
 			this.todoTemplate = Handlebars.compile($('#todo-template').html());
 			this.footerTemplate = Handlebars.compile($('#footer-template').html());
 			this.bindEvents();
@@ -70,7 +78,6 @@ jQuery(function ($) {
 			$('#toggle-all').prop('checked', this.getActiveTodos().length === 0);
 			this.renderFooter();
 			$('#new-todo').focus();
-			util.store('todos-jquery', this.todos);
 		},
 		renderFooter: function () {
 			var todoCount = this.todos.length;
@@ -92,6 +99,7 @@ jQuery(function ($) {
 			});
 
 			this.render();
+      			util.save('todos-jquery', this.todos);
 		},
 		getActiveTodos: function () {
 			return this.todos.filter(function (todo) {
@@ -118,6 +126,7 @@ jQuery(function ($) {
 			this.todos = this.getActiveTodos();
 			this.filter = 'all';
 			this.render();
+      			util.save('todos-jquery', this.todos);
 		},
 		// accepts an element from inside the `.item` div and
 		// returns the corresponding index in the `todos` array
@@ -149,11 +158,13 @@ jQuery(function ($) {
 			$input.val('');
 
 			this.render();
+     			util.save('todos-jquery', this.todos);
 		},
 		toggle: function (e) {
 			var i = this.indexFromEl(e.target);
 			this.todos[i].completed = !this.todos[i].completed;
 			this.render();
+      			util.save('todos-jquery', this.todos);
 		},
 		edit: function (e) {
 			var $input = $(e.target).closest('li').addClass('editing').find('.edit');
@@ -185,10 +196,12 @@ jQuery(function ($) {
 			}
 
 			this.render();
+      			util.save('todos-jquery', this.todos);
 		},
 		destroy: function (e) {
 			this.todos.splice(this.indexFromEl(e.target), 1);
 			this.render();
+      			util.save('todos-jquery', this.todos);
 		}
 	};
 
