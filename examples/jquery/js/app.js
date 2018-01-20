@@ -1,6 +1,6 @@
 /*global jQuery, Handlebars, Router 
 
-Instead of a store function which varies based on argument lenght,
+Instead of a store function which varies based on argument length,
 separated it into a save and load function (line 40 - 45). 
 Changed the one instance of store() with one argument to load() (line 51).
 Removed the call to store() in render() and instead have a call to save() 
