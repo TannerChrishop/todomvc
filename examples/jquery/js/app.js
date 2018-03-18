@@ -12,7 +12,9 @@ jQuery(function ($) {
 	'use strict';
 
 	Handlebars.registerHelper('eq', function (a, b, options) {
-		return a === b ? options.fn(this) : options.inverse(this);
+		if (a === b) {
+			return options.fn(this);
+		}
 	});
 
 	var ENTER_KEY = 13;
